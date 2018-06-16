@@ -10,7 +10,8 @@
         "moduleResolution": "node",
         "baseUrl": "./",
         "paths": {
-            "@/*": ["src/*"]
+            "@/*": ["src/*"],
+            "asserts/*": ["asserts/*"]
         },
         "lib": ["es2015", "es2017", "dom"]
     },

@@ -24,6 +24,7 @@ module.exports = {
             LIB: path.resolve(__dirname, '../src/canvas/lib'),
             Touch: path.resolve(__dirname, '../src/touch'),
             '@': path.resolve(__dirname, '../src'),
+            asserts: path.resolve(__dirname, '../asserts'),
         },
     },
 
@@ -72,12 +73,4 @@ module.exports = {
             inject: true,
         }),
     ],
-
-    // devServer: {
-    //     contentBase: "./",
-    //     port: 8888,
-    //     colors: true,
-    //     historyApiFallback: true,
-    //     inline: true
-    // }
 };

@@ -1,4 +1,4 @@
-import canvas from '../src/index.ts';
+import canvas from '../src/index.js';
 
 window.onload = () => {
     canvas();

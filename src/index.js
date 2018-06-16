@@ -1,16 +1,6 @@
-import init from 'Touch/index.js';
+/**
+ * @description entry
+ */
+import core from '@/core/index';
 
-const imageCheck = {
-    init() {
-        init();
-    },
-    bind(dom) {
-        // bind(dom);
-    },
-};
-
-imageCheck.init();
-// imageCheck.bind('.img');
-
-module.exports = imageCheck;
-export default init;
+export default core;
