@@ -1,4 +1,4 @@
-import Touch from 'TOUCH/touch.js';
+import Touch from 'Touch/touch.js';
 
 let imageCheck = null;
 

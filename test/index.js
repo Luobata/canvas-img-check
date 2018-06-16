@@ -1,3 +1,5 @@
-import canvas from '../src/index';
+import canvas from '../src/index.ts';
 
-canvas();
+window.onload = () => {
+    canvas();
+};

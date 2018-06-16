@@ -1,15 +1,16 @@
-import init from 'TOUCH/index.js';
+import init from 'Touch/index.js';
 
 const imageCheck = {
-    init () {
+    init() {
         init();
     },
-    bind (dom) {
-        bind(dom);
-    }
+    bind(dom) {
+        // bind(dom);
+    },
 };
 
 imageCheck.init();
-imageCheck.bind('.img');
+// imageCheck.bind('.img');
 
-// module.exports = imageCheck;
+module.exports = imageCheck;
+export default init;
