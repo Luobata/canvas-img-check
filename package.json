@@ -13,6 +13,7 @@
         "lint": "eslint --fix src/"
     },
     "devDependencies": {
+        "@types/event-emitter": "^0.3.2",
         "@types/node": "^9.3.0",
         "babel-core": "^6.24.0",
         "babel-eslint": "^8.0.1",
@@ -75,7 +76,5 @@
         "url": "https://github.com/Luobata/canvas-img-check/issues"
     },
     "homepage": "https://github.com/Luobata/canvas-img-check#readme",
-    "dependencies": {
-        "@types/event-emitter": "^0.3.2"
-    }
+    "dependencies": {}
 }

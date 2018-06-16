@@ -3,6 +3,8 @@
  */
 
 import Img from '@/core/img';
+import { config, setConfig } from '@/core/config';
+import { Emitter } from 'event-emitter';
 
 export default class Viewer {
     private canvas: HTMLCanvasElement;
@@ -14,13 +16,31 @@ export default class Viewer {
     private pixelRatio: number;
     private width: number;
     private height: number;
+    private img: Img;
 
-    constructor() {
+    constructor(debuggerMode: boolean = false) {
+        // 展示fps
+        setConfig({
+            debuggerMode,
+        });
+
         this.canvasInit();
         this.sizeInit();
         this.positionInit();
+        this.contentInit();
+        this.event();
 
         document.body.appendChild(this.canvas);
+        this.render();
+    }
+
+    public destroyed(): void {
+        // event off
+        config.emitter.off('render', this.render);
+    }
+
+    private event(): void {
+        config.emitter.on('render', this.render);
     }
 
     private canvasInit(): void {
@@ -31,8 +51,8 @@ export default class Viewer {
     }
 
     private sizeInit(): void {
-        const width: number = window.screen.width;
-        const height: number = window.screen.height;
+        const width: number = window.innerWidth;
+        const height: number = window.innerHeight;
 
         this.width = width;
         this.height = height;
@@ -45,11 +65,57 @@ export default class Viewer {
 
         this.canvas.setAttribute('width', `${this.width}px`);
         this.canvas.setAttribute('height', `${this.height}px`);
+        this.offCanvas.setAttribute('width', `${this.width}px`);
+        this.offCanvas.setAttribute('height', `${this.height}px`);
     }
 
     private positionInit(): void {
         this.canvas.style.position = 'fixed';
         this.canvas.style.left = '0';
         this.canvas.style.top = '0';
+    }
+
+    private contentInit(): void {
+        this.img = new Img(this.offCtx);
+    }
+
+    private backgroundRender(): void {
+        this.offCtx.save();
+        this.offCtx.fillStyle = 'black';
+        this.offCtx.fillRect(
+            0,
+            0,
+            this.width * this.pixelRatio,
+            this.height * this.pixelRatio,
+        );
+        this.offCtx.restore();
+    }
+
+    private syncCtx(): void {
+        const startX: number = 0;
+        const startY: number = 0;
+        const width: number = this.width;
+        const height: number = this.height;
+        const data: ImageData = this.offCtx.getImageData(
+            startX * this.pixelRatio,
+            startY * this.pixelRatio,
+            width * this.pixelRatio,
+            height * this.pixelRatio,
+        );
+
+        this.ctx.putImageData(
+            data,
+            startX * this.pixelRatio,
+            startY * this.pixelRatio,
+        );
+    }
+
+    private render(): void {
+        window.requestAnimationFrame(() => {
+            this.backgroundRender();
+            this.img.render();
+
+            this.syncCtx();
+        });
     }
 }
