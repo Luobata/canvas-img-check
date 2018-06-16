@@ -23,6 +23,7 @@ module.exports = {
         alias: {
             LIB: path.resolve(__dirname, '../src/canvas/lib'),
             INSERT: path.resolve(__dirname, '../src/canvas/insert'),
+            '@': path.resolve(__dirname, '../src'),
         },
     },
 
