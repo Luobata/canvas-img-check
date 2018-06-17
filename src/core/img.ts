@@ -44,20 +44,20 @@ export default class img {
         if (this.imgWidth > config.screenWidth) {
             width = config.screenWidth;
             height = this.imgHeight / (this.imgWidth / config.screenWidth);
+            this.x = 0;
+            this.y = (config.screenHeight - height) / 2;
         } else {
             height = config.screenHeight;
             width = this.imgWidth / (this.imgHeight / config.screenHeight);
+            this.y = 0;
+            this.x = (config.screenWidth - width) / 2;
         }
-        this.x = 0;
-        this.y = (config.screenHeight - height) / 2;
-        // this.x = position.centerX - config.screenWidth / 2;
-        // this.y = position.centerY - config.screenHeight / 2;
         this.sx = 0;
         this.sy = 0;
         this.width = width;
         this.height = height;
-        this.swidth = width;
-        this.sheight = height;
+        this.swidth = this.imgWidth;
+        this.sheight = this.imgHeight;
     }
 
     public render(): void {
@@ -67,14 +67,14 @@ export default class img {
 
         this.ctx.drawImage(
             this.img,
-            this.sx,
-            this.sy,
-            this.swidth,
-            this.sheight,
-            this.x,
-            this.y,
-            this.width,
-            this.height,
+            config.pixelRatio * this.sx,
+            config.pixelRatio * this.sy,
+            config.pixelRatio * this.swidth, // 拉伸
+            config.pixelRatio * this.sheight,
+            config.pixelRatio * this.x,
+            config.pixelRatio * this.y,
+            config.pixelRatio * this.width, // 展示大小
+            config.pixelRatio * this.height,
         );
     }
 }
