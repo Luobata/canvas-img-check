@@ -2,7 +2,18 @@
  * @description img Object
  */
 import { config } from '@/core/config';
-import { position } from '@/core/gesture';
+
+interface Iposition {
+    centerX: number;
+    centerY: number;
+    zoom: number; // 缩放比例
+}
+
+export const position: Iposition = {
+    centerX: 0,
+    centerY: 0,
+    zoom: 1,
+};
 
 export default class img {
     private ctx: CanvasRenderingContext2D;
@@ -20,9 +31,23 @@ export default class img {
     private imgWidth: number;
     private imgHeight: number;
 
+    private maxZoomScale: number = 5;
+    private minZoomScale: number = 1;
+
     constructor(ctx: CanvasRenderingContext2D) {
         this.ctx = ctx;
         this.imgInit();
+    }
+
+    static setCenter(x: number, y: number): void {
+        position.centerX = x;
+        position.centerY = y;
+        if (position.zoom === 1) {
+            position.zoom = 2;
+        } else {
+            position.zoom = 1;
+        }
+        console.log(x, y);
     }
 
     private imgInit(): void {
@@ -32,9 +57,11 @@ export default class img {
             this.img = image;
             this.imgWidth = image.width;
             this.imgHeight = image.height;
-            this.getImageSize();
             config.emitter.emit('render');
         };
+
+        position.centerX = config.screenWidth / 2;
+        position.centerY = config.screenHeight / 2;
     }
 
     private getImageSize(): void {
@@ -44,26 +71,31 @@ export default class img {
         if (this.imgWidth > config.screenWidth) {
             width = config.screenWidth;
             height = this.imgHeight / (this.imgWidth / config.screenWidth);
-            this.x = 0;
-            this.y = (config.screenHeight - height) / 2;
         } else {
             height = config.screenHeight;
             width = this.imgWidth / (this.imgHeight / config.screenHeight);
-            this.y = 0;
-            this.x = (config.screenWidth - width) / 2;
         }
-        this.sx = 0;
-        this.sy = 0;
+        width = width * position.zoom;
+        height = height * position.zoom;
+        this.x = (config.screenWidth - width) / 2;
+        this.y = (config.screenHeight - height) / 2;
+        // sx sy 有问题 并且没考虑边界情况
+        this.sx = (position.centerX - config.screenWidth / 2) * position.zoom;
+        this.sy = (position.centerY - config.screenHeight / 2) * position.zoom;
         this.width = width;
         this.height = height;
-        this.swidth = this.imgWidth;
-        this.sheight = this.imgHeight;
+        this.swidth = this.imgWidth / position.zoom;
+        this.sheight = this.imgHeight / position.zoom;
     }
 
     public render(): void {
         if (!this.img) {
             return;
         }
+        this.getImageSize();
+
+        this.ctx.save();
+        // this.ctx.scale(position.zoom, position.zoom);
 
         this.ctx.drawImage(
             this.img,
@@ -76,5 +108,7 @@ export default class img {
             config.pixelRatio * this.width, // 展示大小
             config.pixelRatio * this.height,
         );
+
+        this.ctx.restore();
     }
 }

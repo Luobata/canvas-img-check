@@ -84,6 +84,13 @@ export default class Viewer {
         });
     }
 
+    private reset(): void {
+        this.canvas.width = this.width * this.pixelRatio;
+        this.canvas.height = this.height * this.pixelRatio;
+        this.offCanvas.width = this.width * this.pixelRatio;
+        this.offCanvas.height = this.height * this.pixelRatio;
+    }
+
     private positionInit(): void {
         this.canvas.style.position = 'fixed';
         this.canvas.style.left = '0';
@@ -128,6 +135,7 @@ export default class Viewer {
 
     private render(): void {
         window.requestAnimationFrame(() => {
+            this.reset();
             this.backgroundRender();
             this.img.render();
 

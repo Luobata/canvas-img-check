@@ -1,19 +1,8 @@
 /**
  * @description gesture
  */
+import img from '@/core/img';
 import { config } from '@/core/config';
-
-interface Iposition {
-    centerX: number;
-    centerY: number;
-    zoom: number; // 缩放比例
-}
-
-export const position: Iposition = {
-    centerX: 0,
-    centerY: 0,
-    zoom: 1,
-};
 
 export default class gesture {
     canvas: HTMLCanvasElement;
@@ -24,10 +13,17 @@ export default class gesture {
         this.event();
     }
 
-    private init(): void {
-        position.centerX = config.screenWidth / 2;
-        position.centerY = config.screenHeight / 2;
+    private init(): void {}
+
+    private event(): void {
+        this.canvas.addEventListener(
+            'click',
+            (e: MouseEvent): void => {
+                img.setCenter(e.clientX, e.clientY);
+                config.emitter.emit('render');
+            },
+        );
     }
 
-    private event(): void {}
+    private destroyed(): void {}
 }
