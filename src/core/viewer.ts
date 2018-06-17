@@ -5,6 +5,9 @@
 import Img from '@/core/img';
 import { config, setConfig } from '@/core/config';
 import { Emitter } from 'event-emitter';
+import Gesture from '@/core/gesture';
+
+type EventListener = (...args: (Object | string)[]) => void;
 
 export default class Viewer {
     private canvas: HTMLCanvasElement;
@@ -17,6 +20,9 @@ export default class Viewer {
     private width: number;
     private height: number;
     private img: Img;
+    private gesture: Gesture;
+
+    private renderEvent: EventListener;
 
     constructor(debuggerMode: boolean = false) {
         // 展示fps
@@ -36,11 +42,14 @@ export default class Viewer {
 
     public destroyed(): void {
         // event off
-        config.emitter.off('render', this.render);
+        config.emitter.off('render', this.renderEvent);
     }
 
     private event(): void {
-        config.emitter.on('render', this.render);
+        this.renderEvent = (): void => {
+            this.render();
+        };
+        config.emitter.on('render', this.renderEvent);
     }
 
     private canvasInit(): void {
@@ -67,6 +76,12 @@ export default class Viewer {
         this.canvas.setAttribute('height', `${this.height}px`);
         this.offCanvas.setAttribute('width', `${this.width}px`);
         this.offCanvas.setAttribute('height', `${this.height}px`);
+
+        setConfig({
+            screenWidth: width,
+            screenHeight: height,
+            pixelRatio: this.pixelRatio,
+        });
     }
 
     private positionInit(): void {
@@ -76,6 +91,7 @@ export default class Viewer {
     }
 
     private contentInit(): void {
+        this.gesture = new Gesture(this.canvas);
         this.img = new Img(this.offCtx);
     }
 
