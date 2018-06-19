@@ -79,13 +79,24 @@ export default class img {
         height = height * position.zoom;
         this.x = (config.screenWidth - width) / 2;
         this.y = (config.screenHeight - height) / 2;
+        console.log(this.x, this.y);
         // sx sy 有问题 并且没考虑边界情况
         this.sx = (position.centerX - config.screenWidth / 2) * position.zoom;
         this.sy = (position.centerY - config.screenHeight / 2) * position.zoom;
+        if (this.sy + config.screenHeight > this.height) {
+            this.sy = this.height - config.screenHeight;
+        } else if (this.sy < this.y) {
+            this.sy = this.y;
+        }
+        if (this.sx + config.screenWidth > this.width) {
+            this.sx = this.width - config.screenWidth;
+        } else if (this.sx < this.x) {
+            this.sx = this.x;
+        }
         this.width = width;
         this.height = height;
-        this.swidth = this.imgWidth / position.zoom;
-        this.sheight = this.imgHeight / position.zoom;
+        this.swidth = this.imgWidth;
+        this.sheight = this.imgHeight;
     }
 
     public render(): void {
