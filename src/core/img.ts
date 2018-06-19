@@ -46,8 +46,9 @@ export default class img {
             position.zoom = 2;
         } else {
             position.zoom = 1;
+            position.centerX = config.screenWidth / 2;
+            position.centerY = config.screenHeight / 2;
         }
-        console.log(x, y);
     }
 
     private imgInit(): void {
@@ -77,21 +78,29 @@ export default class img {
         }
         width = width * position.zoom;
         height = height * position.zoom;
-        this.x = (config.screenWidth - width) / 2;
-        this.y = (config.screenHeight - height) / 2;
-        console.log(this.x, this.y);
+        const centerX: number = config.screenWidth - position.centerX;
+        const centerY: number = config.screenHeight - position.centerY;
+        this.x = centerX - width / 2;
+        this.y = centerY - height / 2;
         // sx sy 有问题 并且没考虑边界情况
         this.sx = (position.centerX - config.screenWidth / 2) * position.zoom;
         this.sy = (position.centerY - config.screenHeight / 2) * position.zoom;
-        if (this.sy + config.screenHeight > this.height) {
-            this.sy = this.height - config.screenHeight;
-        } else if (this.sy < this.y) {
-            this.sy = this.y;
+        this.sx = 0;
+        this.sy = 0;
+        if (width >= config.screenWidth) {
+            // 可能存在越界
+            if (this.x + width < config.screenWidth) {
+                this.x = config.screenWidth - width;
+            } else if (this.x > this.sx) {
+                this.x = this.sx;
+            }
         }
-        if (this.sx + config.screenWidth > this.width) {
-            this.sx = this.width - config.screenWidth;
-        } else if (this.sx < this.x) {
-            this.sx = this.x;
+        if (height >= config.screenHeight) {
+            if (this.y + height < config.screenHeight) {
+                this.y = config.screenHeight - height;
+            } else if (this.y > this.sy) {
+                this.y = this.sy;
+            }
         }
         this.width = width;
         this.height = height;
