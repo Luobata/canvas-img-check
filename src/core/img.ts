@@ -27,6 +27,7 @@ type EventListener = (...args: (Object | string)[]) => void;
 export default class Img {
     // 每秒的帧数
     public static flashPerSecond: number = 60;
+    public renderList: Irender[] = [];
 
     private ctx: CanvasRenderingContext2D;
     // private img: string; // img source
@@ -54,8 +55,6 @@ export default class Img {
 
     private zoomEvent: EventListener;
     private zoomFlash: number = 8; // zoom动画持续帧数 60帧 即1s
-
-    private renderList: Irender[] = [];
 
     constructor(ctx: CanvasRenderingContext2D) {
         this.ctx = ctx;
@@ -102,10 +101,16 @@ export default class Img {
                 config.pixelRatio * renderItem.width, // 展示大小
                 config.pixelRatio * renderItem.height,
             );
+            this.syncPosition(
+                renderItem.x,
+                renderItem.y,
+                renderItem.width,
+                renderItem.height,
+            );
             if (this.renderList.length) {
-                config.emitter.emit('render');
+                // config.emitter.emit('render');
             } else {
-                this.syncPosition(this.dx, this.dy, this.dwidth, this.dheight);
+                // this.syncPosition(this.dx, this.dy, this.dwidth, this.dheight);
             }
         } else {
             this.ctx.drawImage(

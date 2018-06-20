@@ -168,6 +168,9 @@ export default class Viewer {
             this.img.render();
             this.showFps();
             this.syncCtx();
+            if (this.img.renderList.length) {
+                this.render();
+            }
         });
     }
 }
