@@ -25,6 +25,9 @@ export const position: Iposition = {
 type EventListener = (...args: (Object | string)[]) => void;
 
 export default class Img {
+    // 每秒的帧数
+    public static flashPerSecond: number = 60;
+
     private ctx: CanvasRenderingContext2D;
     // private img: string; // img source
     private img: HTMLImageElement;
@@ -50,7 +53,7 @@ export default class Img {
     private minZoomScale: number = 1;
 
     private zoomEvent: EventListener;
-    private zoomFlash: number = 60; // zoom动画持续帧数 60帧
+    private zoomFlash: number = 10; // zoom动画持续帧数 60帧 即1s
 
     private renderList: Irender[] = [];
 
@@ -99,6 +102,11 @@ export default class Img {
                 config.pixelRatio * renderItem.width, // 展示大小
                 config.pixelRatio * renderItem.height,
             );
+            if (this.renderList.length) {
+                config.emitter.emit('render');
+            } else {
+                this.syncPosition(this.dx, this.dy, this.dwidth, this.dheight);
+            }
         } else {
             this.ctx.drawImage(
                 this.img,
@@ -122,7 +130,19 @@ export default class Img {
         this.zoomEvent = (): void => {
             // 动画计算
             this.getImageSize();
-            this.syncPosition(this.dx, this.dy, this.dwidth, this.dheight);
+            for (let i: number = 0; i <= this.zoomFlash; i = i + 1) {
+                this.renderList.push({
+                    x: this.x + ((this.dx - this.x) / this.zoomFlash) * i,
+                    y: this.y + ((this.dy - this.y) / this.zoomFlash) * i,
+                    width:
+                        this.width +
+                        ((this.dwidth - this.width) / this.zoomFlash) * i,
+                    height:
+                        this.height +
+                        ((this.dheight - this.height) / this.zoomFlash) * i,
+                });
+            }
+            // this.syncPosition(this.dx, this.dy, this.dwidth, this.dheight);
             config.emitter.emit('render');
         };
         config.emitter.on('zoom', this.zoomEvent);
