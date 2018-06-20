@@ -53,7 +53,7 @@ export default class Img {
     private minZoomScale: number = 1;
 
     private zoomEvent: EventListener;
-    private zoomFlash: number = 10; // zoom动画持续帧数 60帧 即1s
+    private zoomFlash: number = 8; // zoom动画持续帧数 60帧 即1s
 
     private renderList: Irender[] = [];
 
