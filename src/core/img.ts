@@ -9,6 +9,13 @@ interface Iposition {
     zoom: number; // 缩放比例
 }
 
+interface Irender {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+}
+
 export const position: Iposition = {
     centerX: 0,
     centerY: 0,
@@ -45,6 +52,8 @@ export default class img {
     private zoomEvent: EventListener;
     private zoomFlash: number = 60; // zoom动画持续帧数 60帧
 
+    private renderList: Irender[] = [];
+
     constructor(ctx: CanvasRenderingContext2D) {
         this.ctx = ctx;
         this.event();
@@ -67,6 +76,7 @@ export default class img {
         this.zoomEvent = (): void => {
             // 动画计算
             this.getImageSize();
+            // this.syncPosition(this.dx, this.dy, this.dwidth, this.dheight);
             config.emitter.emit('render');
         };
         config.emitter.on('zoom', this.zoomEvent);
@@ -159,17 +169,32 @@ export default class img {
         this.ctx.save();
         // this.ctx.scale(position.zoom, position.zoom);
 
-        this.ctx.drawImage(
-            this.img,
-            config.pixelRatio * this.sx,
-            config.pixelRatio * this.sy,
-            config.pixelRatio * this.swidth, // 拉伸
-            config.pixelRatio * this.sheight,
-            config.pixelRatio * this.x,
-            config.pixelRatio * this.y,
-            config.pixelRatio * this.width, // 展示大小
-            config.pixelRatio * this.height,
-        );
+        if (this.renderList.length) {
+            const renderItem: Irender = this.renderList.shift();
+            this.ctx.drawImage(
+                this.img,
+                config.pixelRatio * this.sx,
+                config.pixelRatio * this.sy,
+                config.pixelRatio * this.swidth, // 拉伸
+                config.pixelRatio * this.sheight,
+                config.pixelRatio * renderItem.x,
+                config.pixelRatio * renderItem.y,
+                config.pixelRatio * renderItem.width, // 展示大小
+                config.pixelRatio * renderItem.height,
+            );
+        } else {
+            this.ctx.drawImage(
+                this.img,
+                config.pixelRatio * this.sx,
+                config.pixelRatio * this.sy,
+                config.pixelRatio * this.swidth, // 拉伸
+                config.pixelRatio * this.sheight,
+                config.pixelRatio * this.x,
+                config.pixelRatio * this.y,
+                config.pixelRatio * this.width, // 展示大小
+                config.pixelRatio * this.height,
+            );
+        }
 
         this.ctx.restore();
     }
