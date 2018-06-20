@@ -9,6 +9,9 @@ import { Emitter } from 'event-emitter';
 
 type EventListener = (...args: (Object | string)[]) => void;
 
+let lastCalledTime: number;
+let fps: number = 0;
+
 export default class Viewer {
     private canvas: HTMLCanvasElement;
     private ctx: CanvasRenderingContext2D;
@@ -24,6 +27,8 @@ export default class Viewer {
 
     private renderEvent: EventListener;
 
+    private paintList: ImageData[] = [];
+
     constructor(debuggerMode: boolean = false) {
         // 展示fps
         setConfig({
@@ -37,6 +42,7 @@ export default class Viewer {
         this.event();
 
         document.body.appendChild(this.canvas);
+        this.reset();
         this.render();
     }
 
@@ -114,6 +120,29 @@ export default class Viewer {
         this.offCtx.restore();
     }
 
+    private showFps(): void {
+        if (!config.debuggerMode) {
+            return;
+        }
+
+        if (!lastCalledTime) {
+            lastCalledTime = Date.now();
+            fps = 0;
+
+            return;
+        }
+        const delta: number = (Date.now() - lastCalledTime) / 1000;
+        lastCalledTime = Date.now();
+        fps = 1 / delta;
+
+        this.offCtx.save();
+        this.offCtx.fillStyle = 'white';
+        this.offCtx.font = '100px consolas';
+        this.offCtx.textBaseline = 'top';
+        this.offCtx.fillText(Math.floor(fps).toString(), 0, 0);
+        this.offCtx.restore();
+    }
+
     private syncCtx(): void {
         const startX: number = 0;
         const startY: number = 0;
@@ -135,10 +164,9 @@ export default class Viewer {
 
     private render(): void {
         window.requestAnimationFrame(() => {
-            this.reset();
             this.backgroundRender();
             this.img.render();
-
+            this.showFps();
             this.syncCtx();
         });
     }
