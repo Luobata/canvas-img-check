@@ -20,7 +20,7 @@ export default class gesture {
             'click',
             (e: MouseEvent): void => {
                 img.setCenter(e.clientX, e.clientY);
-                config.emitter.emit('render');
+                config.emitter.emit('zoom');
             },
         );
     }

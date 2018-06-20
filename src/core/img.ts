@@ -15,6 +15,8 @@ export const position: Iposition = {
     zoom: 1,
 };
 
+type EventListener = (...args: (Object | string)[]) => void;
+
 export default class img {
     private ctx: CanvasRenderingContext2D;
     // private img: string; // img source
@@ -28,14 +30,24 @@ export default class img {
     private width: number;
     private height: number;
 
+    // tmp animation value
+    private dx: number;
+    private dy: number;
+    private dwidth: number;
+    private dheight: number;
+
     private imgWidth: number;
     private imgHeight: number;
 
     private maxZoomScale: number = 5;
     private minZoomScale: number = 1;
 
+    private zoomEvent: EventListener;
+    private zoomFlash: number = 60; // zoom动画持续帧数 60帧
+
     constructor(ctx: CanvasRenderingContext2D) {
         this.ctx = ctx;
+        this.event();
         this.imgInit();
     }
 
@@ -51,6 +63,15 @@ export default class img {
         }
     }
 
+    private event(): void {
+        this.zoomEvent = (): void => {
+            // 动画计算
+            this.getImageSize();
+            config.emitter.emit('render');
+        };
+        config.emitter.on('zoom', this.zoomEvent);
+    }
+
     private imgInit(): void {
         const image: HTMLImageElement = new Image();
         image.src = '../../test.jpg';
@@ -58,6 +79,8 @@ export default class img {
             this.img = image;
             this.imgWidth = image.width;
             this.imgHeight = image.height;
+            this.getImageSize();
+            this.syncPosition(this.dx, this.dy, this.dwidth, this.dheight);
             config.emitter.emit('render');
         };
 
@@ -65,10 +88,24 @@ export default class img {
         position.centerY = config.screenHeight / 2;
     }
 
+    private syncPosition(
+        x: number,
+        y: number,
+        width: number,
+        height: number,
+    ): void {
+        this.x = x;
+        this.y = y;
+        this.width = width;
+        this.height = height;
+    }
+
     private getImageSize(): void {
         // 实际宽高
         let width: number;
         let height: number;
+        let x: number;
+        let y: number;
         if (this.imgWidth > config.screenWidth) {
             width = config.screenWidth;
             height = this.imgHeight / (this.imgWidth / config.screenWidth);
@@ -80,39 +117,44 @@ export default class img {
         height = height * position.zoom;
         const centerX: number = config.screenWidth - position.centerX;
         const centerY: number = config.screenHeight - position.centerY;
-        this.x = centerX - width / 2;
-        this.y = centerY - height / 2;
+        x = centerX - width / 2;
+        y = centerY - height / 2;
         // sx sy 有问题 并且没考虑边界情况
-        this.sx = (position.centerX - config.screenWidth / 2) * position.zoom;
-        this.sy = (position.centerY - config.screenHeight / 2) * position.zoom;
         this.sx = 0;
         this.sy = 0;
         if (width >= config.screenWidth) {
             // 可能存在越界
-            if (this.x + width < config.screenWidth) {
-                this.x = config.screenWidth - width;
-            } else if (this.x > this.sx) {
-                this.x = this.sx;
+            if (x + width < config.screenWidth) {
+                x = config.screenWidth - width;
+            } else if (x > this.sx) {
+                x = this.sx;
             }
         }
         if (height >= config.screenHeight) {
-            if (this.y + height < config.screenHeight) {
-                this.y = config.screenHeight - height;
-            } else if (this.y > this.sy) {
-                this.y = this.sy;
+            if (y + height < config.screenHeight) {
+                y = config.screenHeight - height;
+            } else if (y > this.sy) {
+                y = this.sy;
             }
         }
-        this.width = width;
-        this.height = height;
+        // 动画元素 x y width height
+        this.dx = x;
+        this.dy = y;
+        this.dwidth = width;
+        this.dheight = height;
+
         this.swidth = this.imgWidth;
         this.sheight = this.imgHeight;
+    }
+
+    public destroyed(): void {
+        config.emitter.off('zoom', this.zoomEvent);
     }
 
     public render(): void {
         if (!this.img) {
             return;
         }
-        this.getImageSize();
 
         this.ctx.save();
         // this.ctx.scale(position.zoom, position.zoom);
