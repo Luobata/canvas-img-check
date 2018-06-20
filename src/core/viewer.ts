@@ -164,6 +164,7 @@ export default class Viewer {
 
     private render(): void {
         window.requestAnimationFrame(() => {
+            this.reset();
             this.backgroundRender();
             this.img.render();
             this.showFps();
