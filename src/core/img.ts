@@ -24,7 +24,7 @@ export const position: Iposition = {
 
 type EventListener = (...args: (Object | string)[]) => void;
 
-export default class img {
+export default class Img {
     private ctx: CanvasRenderingContext2D;
     // private img: string; // img source
     private img: HTMLImageElement;
@@ -60,7 +60,7 @@ export default class img {
         this.imgInit();
     }
 
-    static setCenter(x: number, y: number): void {
+    public static SETCENTER(x: number, y: number): void {
         position.centerX = x;
         position.centerY = y;
         if (position.zoom === 1) {
@@ -72,11 +72,57 @@ export default class img {
         }
     }
 
+    public destroyed(): void {
+        config.emitter.off('zoom', this.zoomEvent);
+    }
+
+    public render(): void {
+        if (!this.img) {
+            return;
+        }
+
+        this.ctx.save();
+        // this.ctx.scale(position.zoom, position.zoom);
+
+        if (this.renderList.length) {
+            const renderItem: Irender = this.renderList.shift();
+            this.ctx.drawImage(
+                this.img,
+                config.pixelRatio * this.sx,
+                config.pixelRatio * this.sy,
+                // config.pixelRatio * this.swidth, // 拉伸
+                // config.pixelRatio * this.sheight,
+                this.swidth,
+                this.sheight,
+                config.pixelRatio * renderItem.x,
+                config.pixelRatio * renderItem.y,
+                config.pixelRatio * renderItem.width, // 展示大小
+                config.pixelRatio * renderItem.height,
+            );
+        } else {
+            this.ctx.drawImage(
+                this.img,
+                config.pixelRatio * this.sx,
+                config.pixelRatio * this.sy,
+                // config.pixelRatio * this.swidth, // 拉伸
+                // config.pixelRatio * this.sheight,
+                this.swidth,
+                this.sheight,
+                config.pixelRatio * this.x,
+                config.pixelRatio * this.y,
+                config.pixelRatio * this.width, // 展示大小
+                config.pixelRatio * this.height,
+            );
+        }
+
+        this.ctx.restore();
+    }
+
     private event(): void {
         this.zoomEvent = (): void => {
             // 动画计算
             this.getImageSize();
-            // this.syncPosition(this.dx, this.dy, this.dwidth, this.dheight);
+            this.syncPosition(this.dx, this.dy, this.dwidth, this.dheight);
             config.emitter.emit('render');
         };
         config.emitter.on('zoom', this.zoomEvent);
@@ -155,47 +201,5 @@ export default class img {
 
         this.swidth = this.imgWidth;
         this.sheight = this.imgHeight;
-    }
-
-    public destroyed(): void {
-        config.emitter.off('zoom', this.zoomEvent);
-    }
-
-    public render(): void {
-        if (!this.img) {
-            return;
-        }
-
-        this.ctx.save();
-        // this.ctx.scale(position.zoom, position.zoom);
-
-        if (this.renderList.length) {
-            const renderItem: Irender = this.renderList.shift();
-            this.ctx.drawImage(
-                this.img,
-                config.pixelRatio * this.sx,
-                config.pixelRatio * this.sy,
-                config.pixelRatio * this.swidth, // 拉伸
-                config.pixelRatio * this.sheight,
-                config.pixelRatio * renderItem.x,
-                config.pixelRatio * renderItem.y,
-                config.pixelRatio * renderItem.width, // 展示大小
-                config.pixelRatio * renderItem.height,
-            );
-        } else {
-            this.ctx.drawImage(
-                this.img,
-                config.pixelRatio * this.sx,
-                config.pixelRatio * this.sy,
-                config.pixelRatio * this.swidth, // 拉伸
-                config.pixelRatio * this.sheight,
-                config.pixelRatio * this.x,
-                config.pixelRatio * this.y,
-                config.pixelRatio * this.width, // 展示大小
-                config.pixelRatio * this.height,
-            );
-        }
-
-        this.ctx.restore();
     }
 }

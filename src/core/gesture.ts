@@ -1,11 +1,11 @@
 /**
  * @description gesture
  */
-import img from '@/core/img';
 import { config } from '@/core/config';
+import img from '@/core/img';
 
-export default class gesture {
-    canvas: HTMLCanvasElement;
+export default class Gesture {
+    private canvas: HTMLCanvasElement;
 
     constructor(canvas: HTMLCanvasElement) {
         this.canvas = canvas;
@@ -13,17 +13,21 @@ export default class gesture {
         this.event();
     }
 
-    private init(): void {}
+    public destroyed(): void {
+        // event off
+    }
+
+    private init(): void {
+        // wait for gesture
+    }
 
     private event(): void {
         this.canvas.addEventListener(
             'click',
             (e: MouseEvent): void => {
-                img.setCenter(e.clientX, e.clientY);
+                img.SETCENTER(e.clientX, e.clientY);
                 config.emitter.emit('zoom');
             },
         );
     }
-
-    private destroyed(): void {}
 }

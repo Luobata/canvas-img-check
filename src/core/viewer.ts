@@ -2,10 +2,10 @@
  * @description viewer Object
  */
 
-import Img from '@/core/img';
 import { config, setConfig } from '@/core/config';
-import { Emitter } from 'event-emitter';
 import Gesture from '@/core/gesture';
+import Img from '@/core/img';
+import { Emitter } from 'event-emitter';
 
 type EventListener = (...args: (Object | string)[]) => void;
 
@@ -72,8 +72,8 @@ export default class Viewer {
         this.offCanvas.width = this.width * this.pixelRatio;
         this.offCanvas.height = this.height * this.pixelRatio;
 
-        this.canvas.setAttribute('width', `${this.width}px`);
-        this.canvas.setAttribute('height', `${this.height}px`);
+        this.canvas.style.width = `${this.width}px`;
+        this.canvas.style.height = `${this.height}px`;
         this.offCanvas.setAttribute('width', `${this.width}px`);
         this.offCanvas.setAttribute('height', `${this.height}px`);
 
