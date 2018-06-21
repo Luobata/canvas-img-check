@@ -10,6 +10,7 @@ export default class Gesture {
 
     private hammer: HammerManager;
     private tapListener: HammerListener;
+    private swipeListener: HammerListener;
 
     constructor(canvas: HTMLCanvasElement) {
         this.canvas = canvas;
@@ -21,6 +22,7 @@ export default class Gesture {
     public destroyed(): void {
         // event off
         this.hammer.off('tap', this.tapListener);
+        this.hammer.off('swipe', this.swipeListener);
     }
 
     private init(): void {
@@ -32,6 +34,10 @@ export default class Gesture {
             img.SETCENTER(e.center.x, e.center.y);
             config.emitter.emit('zoom');
         };
+        this.swipeListener = (e: HammerInput): void => {
+            console.log(e);
+        };
         this.hammer.on('tap', this.tapListener);
+        this.hammer.on('swipe', this.swipeListener);
     }
 }
