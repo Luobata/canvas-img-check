@@ -56,6 +56,8 @@ export default class Img {
     private zoomEvent: EventListener;
     private zoomFlash: number = 8; // zoom动画持续帧数 60帧 即1s
 
+    private swipeEvent: EventListener;
+
     constructor(ctx: CanvasRenderingContext2D) {
         this.ctx = ctx;
         this.event();
@@ -76,6 +78,7 @@ export default class Img {
 
     public destroyed(): void {
         config.emitter.off('zoom', this.zoomEvent);
+        config.emitter.off('swipe', this.swipeEvent);
     }
 
     public render(): void {
@@ -150,7 +153,20 @@ export default class Img {
             // this.syncPosition(this.dx, this.dy, this.dwidth, this.dheight);
             config.emitter.emit('render');
         };
+
+        this.swipeEvent = (e: HammerInput): void => {
+            if (position.zoom === 1) {
+                // 图片间切换
+                // 如果没有下一张 放手弹回
+            } else {
+                // 整图滑动
+                // v0t + 1/2 a t^2 = l
+                // v0 由 delatY delatTime 决定
+                // a 常数
+            }
+        };
         config.emitter.on('zoom', this.zoomEvent);
+        config.emitter.on('swipe', this.swipeEvent);
     }
 
     private imgInit(): void {

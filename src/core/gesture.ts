@@ -36,6 +36,7 @@ export default class Gesture {
         };
         this.swipeListener = (e: HammerInput): void => {
             console.log(e);
+            config.emitter.emit('swipe', e);
         };
         this.hammer.on('tap', this.tapListener);
         this.hammer.on('swipe', this.swipeListener);
