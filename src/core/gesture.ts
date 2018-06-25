@@ -4,6 +4,7 @@
 import { config } from '@/core/config';
 import img from '@/core/img';
 import Hammer from 'hammerjs';
+import { Ipoint } from '@/common/interface';
 
 export default class Gesture {
     private canvas: HTMLCanvasElement;
@@ -32,6 +33,10 @@ export default class Gesture {
     }
 
     private event(): void {
+        // tslint:disable no-backbone-get-set-outside-model
+        this.hammer.get('pan').set({ direction: Hammer.DIRECTION_ALL });
+        // tslint:enable no-backbone-get-set-outside-model
+
         this.tapListener = (e: HammerInput): void => {
             img.SETCENTER(e.center.x, e.center.y);
             config.emitter.emit('zoom');
@@ -40,15 +45,28 @@ export default class Gesture {
             console.log(e);
             config.emitter.emit('swipe', e);
         };
+
+        let panCenter: Ipoint = {
+            x: -1,
+            y: -1,
+        };
         this.panListener = (e: HammerInput): void => {
-            console.log(e);
             if (e.isFirst) {
-                alert(1);
+                panCenter = e.center;
             }
-            config.emitter.emit('move', e);
+            if (panCenter.x !== -1) {
+                config.emitter.emit('move', {
+                    x: e.center.x - panCenter.x,
+                    y: e.center.y - panCenter.y,
+                });
+                panCenter = e.center;
+            }
+            if (e.isFinal) {
+                panCenter.x = -1;
+            }
         };
         this.panStartListener = (e: HammerInput): void => {
-            console.log(1, e);
+            panCenter = e.center;
         };
         this.hammer.on('tap', this.tapListener);
         this.hammer.on('swipe', this.swipeListener);

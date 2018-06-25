@@ -1,8 +1,9 @@
 /**
  * @description img Object
  */
-import { config } from '@/core/config';
 import { swipe } from '@/animation/animation';
+import { Ipoint } from '@/common/interface';
+import { config } from '@/core/config';
 
 interface Iposition {
     centerX: number;
@@ -41,6 +42,12 @@ export default class Img {
     private y: number;
     private width: number;
     private height: number;
+
+    // 左右拖动最大位置
+    private maxX: number;
+    private minX: number;
+    private maxY: number;
+    private minY: number;
 
     // tmp animation value
     private dx: number;
@@ -168,11 +175,16 @@ export default class Img {
             }
         };
 
-        this.moveEvent = (e: HammerInput): void => {
+        this.moveEvent = (delat: Ipoint): void => {
             if (position.zoom === 1) {
                 // 图片间切换
                 // 如果没有下一张 放手弹回
             } else {
+                console.log(delat);
+                this.dx += delat.x;
+                this.dy += delat.y;
+                this.syncPosition(this.dx, this.dy, this.dwidth, this.dheight);
+                config.emitter.emit('render');
                 // img move
             }
         };
