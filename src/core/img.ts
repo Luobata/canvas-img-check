@@ -194,9 +194,13 @@ export default class Img {
                 if (this.dy < this.minY) {
                     this.dy = this.minY;
                 }
-                this.syncPosition(this.dx, this.dy, this.dwidth, this.dheight);
+                this.renderList.push({
+                    x: this.dx,
+                    y: this.dy,
+                    width: this.dwidth,
+                    height: this.dheight,
+                });
                 config.emitter.emit('render');
-                // img move
             }
         };
         config.emitter.on('zoom', this.zoomEvent);
