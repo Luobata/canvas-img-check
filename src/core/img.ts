@@ -180,9 +180,20 @@ export default class Img {
                 // 图片间切换
                 // 如果没有下一张 放手弹回
             } else {
-                console.log(delat);
                 this.dx += delat.x;
                 this.dy += delat.y;
+                if (this.dx > this.maxX) {
+                    this.dx = this.maxX;
+                }
+                if (this.dx < this.minX) {
+                    this.dx = this.minX;
+                }
+                if (this.dy > this.maxY) {
+                    this.dy = this.maxY;
+                }
+                if (this.dy < this.minY) {
+                    this.dy = this.minY;
+                }
                 this.syncPosition(this.dx, this.dy, this.dwidth, this.dheight);
                 config.emitter.emit('render');
                 // img move
@@ -258,6 +269,11 @@ export default class Img {
                 y = this.sy;
             }
         }
+
+        this.minX = config.screenWidth - width;
+        this.maxX = this.sx;
+        this.minY = config.screenHeight - height;
+        this.maxY = this.sy;
         // 动画元素 x y width height
         this.dx = x;
         this.dy = y;

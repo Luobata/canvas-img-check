@@ -14,6 +14,7 @@ export default class Gesture {
     private swipeListener: HammerListener;
     private panListener: HammerListener;
     private panStartListener: HammerListener;
+    private panEndListener: HammerListener;
 
     constructor(canvas: HTMLCanvasElement) {
         this.canvas = canvas;
@@ -68,9 +69,13 @@ export default class Gesture {
         this.panStartListener = (e: HammerInput): void => {
             panCenter = e.center;
         };
+        this.panEndListener = (e: HammerInput): void => {
+            console.log('pan end');
+        };
         this.hammer.on('tap', this.tapListener);
         this.hammer.on('swipe', this.swipeListener);
         this.hammer.on('pan', this.panListener);
         this.hammer.on('panstart', this.panStartListener);
+        this.hammer.on('panend', this.panEndListener);
     }
 }
