@@ -2,6 +2,7 @@
  * @description img Object
  */
 import { config } from '@/core/config';
+import { swipe } from '@/animation/animation';
 
 interface Iposition {
     centerX: number;
@@ -57,6 +58,7 @@ export default class Img {
     private zoomFlash: number = 8; // zoom动画持续帧数 60帧 即1s
 
     private swipeEvent: EventListener;
+    private moveEvent: EventListener;
 
     constructor(ctx: CanvasRenderingContext2D) {
         this.ctx = ctx;
@@ -165,8 +167,18 @@ export default class Img {
                 // a 常数
             }
         };
+
+        this.moveEvent = (e: HammerInput): void => {
+            if (position.zoom === 1) {
+                // 图片间切换
+                // 如果没有下一张 放手弹回
+            } else {
+                // img move
+            }
+        };
         config.emitter.on('zoom', this.zoomEvent);
         config.emitter.on('swipe', this.swipeEvent);
+        config.emitter.on('move', this.moveEvent);
     }
 
     private imgInit(): void {

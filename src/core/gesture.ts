@@ -11,6 +11,8 @@ export default class Gesture {
     private hammer: HammerManager;
     private tapListener: HammerListener;
     private swipeListener: HammerListener;
+    private panListener: HammerListener;
+    private panStartListener: HammerListener;
 
     constructor(canvas: HTMLCanvasElement) {
         this.canvas = canvas;
@@ -38,7 +40,19 @@ export default class Gesture {
             console.log(e);
             config.emitter.emit('swipe', e);
         };
+        this.panListener = (e: HammerInput): void => {
+            console.log(e);
+            if (e.isFirst) {
+                alert(1);
+            }
+            config.emitter.emit('move', e);
+        };
+        this.panStartListener = (e: HammerInput): void => {
+            console.log(1, e);
+        };
         this.hammer.on('tap', this.tapListener);
         this.hammer.on('swipe', this.swipeListener);
+        this.hammer.on('pan', this.panListener);
+        this.hammer.on('panstart', this.panStartListener);
     }
 }
