@@ -36,6 +36,7 @@ export default class Gesture {
     private event(): void {
         // tslint:disable no-backbone-get-set-outside-model
         this.hammer.get('pan').set({ direction: Hammer.DIRECTION_ALL });
+        this.hammer.get('swipe').set({ direction: Hammer.DIRECTION_ALL });
         // tslint:enable no-backbone-get-set-outside-model
 
         this.tapListener = (e: HammerInput): void => {
@@ -70,7 +71,7 @@ export default class Gesture {
             panCenter = e.center;
         };
         this.panEndListener = (e: HammerInput): void => {
-            console.log('pan end');
+            // console.log('pan end');
         };
         this.hammer.on('tap', this.tapListener);
         this.hammer.on('swipe', this.swipeListener);

@@ -20,7 +20,8 @@ export const swipe: Function = (
     // maxL 减速到0可位移的距离
     // lengthByTime 距离随时间变化的函数
     // speedByTime 速度随时间变化的函数
-    const v: number = time / l;
+    console.log(begin, max);
+    const v: number = (time / l) * 50;
     const a: number = -1 / 3;
     const t: number = v / a;
     const lengthByTime: Function = (frameTime: number): number => {
@@ -32,11 +33,11 @@ export const swipe: Function = (
     const maxL: number = lengthByTime(t);
 
     const valueList: number[] = [];
-    for (let i: number = 0; i <= t * framePerSecond; i = i + 1) {
+    for (let i: number = 1; i <= t * framePerSecond; i = i + 1) {
         const tmpTime: number = i / framePerSecond;
         const tmpLength: number = lengthByTime(tmpTime);
         const end: number = begin + tmpLength;
-        if (end > max) {
+        if (end < max) {
             valueList.push(max);
             break;
         } else {

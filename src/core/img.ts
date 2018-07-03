@@ -172,17 +172,30 @@ export default class Img {
                 // v0t + 1/2 a t^2 = l
                 // v0 由 delatY delatTime 决定
                 // a 常数
+
                 // 先计算Y方向
                 const list: number[] = swipe(
                     e.deltaY,
                     e.deltaTime,
-                    e.center.y,
-                    0,
+                    this.dy,
+                    this.minY,
                 );
+                this.renderList = list.map((v: number) => {
+                    return {
+                        x: this.x,
+                        y: v,
+                        width: this.width,
+                        height: this.height,
+                    };
+                });
+                console.log(this.renderList);
+                config.emitter.emit('render');
             }
         };
 
         this.moveEvent = (delat: Ipoint): void => {
+            // 测试swipe 临时注释
+            return;
             if (position.zoom === 1) {
                 // 图片间切换
                 // 如果没有下一张 放手弹回
