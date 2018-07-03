@@ -172,6 +172,13 @@ export default class Img {
                 // v0t + 1/2 a t^2 = l
                 // v0 由 delatY delatTime 决定
                 // a 常数
+                // 先计算Y方向
+                const list: number[] = swipe(
+                    e.deltaY,
+                    e.deltaTime,
+                    e.center.y,
+                    0,
+                );
             }
         };
 
