@@ -174,12 +174,12 @@ export default class Img {
                 // a 常数
 
                 // 先计算Y方向
-                const list: number[] = swipe(
-                    e.deltaY,
-                    e.deltaTime,
-                    this.dy,
-                    this.minY,
-                );
+                let list: number[];
+                if (e.deltaY < 0) {
+                    list = swipe(e.deltaY, e.deltaTime, this.y, this.minY);
+                } else {
+                    list = swipe(e.deltaY, e.deltaTime, this.y, this.maxY);
+                }
                 this.renderList = list.map((v: number) => {
                     return {
                         x: this.x,
@@ -188,7 +188,6 @@ export default class Img {
                         height: this.height,
                     };
                 });
-                console.log(this.renderList);
                 config.emitter.emit('render');
             }
         };
