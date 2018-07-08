@@ -164,6 +164,7 @@ export default class Img {
         };
 
         this.swipeEvent = (e: HammerInput): void => {
+            // 通过阅读photo-swipe源码 swipe 可能有多个手势的情况 这种情况认为需要快速滚动 初速度 + 一个常量
             if (position.zoom === 1) {
                 // 图片间切换
                 // 如果没有下一张 放手弹回
@@ -193,8 +194,6 @@ export default class Img {
         };
 
         this.moveEvent = (delat: Ipoint): void => {
-            // 测试swipe 临时注释
-            return;
             if (position.zoom === 1) {
                 // 图片间切换
                 // 如果没有下一张 放手弹回
@@ -224,7 +223,9 @@ export default class Img {
         };
         config.emitter.on('zoom', this.zoomEvent);
         config.emitter.on('swipe', this.swipeEvent);
-        config.emitter.on('move', this.moveEvent);
+
+        // 测试swipe 临时注释
+        // config.emitter.on('move', this.moveEvent);
     }
 
     private imgInit(): void {
