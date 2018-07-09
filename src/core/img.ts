@@ -285,6 +285,13 @@ export default class Img {
         if (y < 0 && position.zoom === 1) {
             y = 0;
         }
+        if (position.zoom === 1) {
+            x = 0;
+            y = 0;
+        } else {
+            x = -position.centerX;
+            y = -position.centerY;
+        }
         // sx sy 有问题 并且没考虑边界情况
         this.sx = 0;
         this.sy = 0;
