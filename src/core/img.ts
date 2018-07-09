@@ -230,7 +230,7 @@ export default class Img {
 
     private imgInit(): void {
         const image: HTMLImageElement = new Image();
-        // image.src = '../../test.jpg';
+        /// image.src = '../../test.jpg';
         image.src = '../../image.jpg';
         image.onload = (): void => {
             this.img = image;
@@ -277,29 +277,40 @@ export default class Img {
         const centerY: number = config.screenHeight - position.centerY;
         x = centerX - width / 2;
         y = centerY - height / 2;
+
+        // 如果zoom = 1 并且超出屏幕的 不用居中
+        if (x < 0 && position.zoom === 1) {
+            x = 0;
+        }
+        if (y < 0 && position.zoom === 1) {
+            y = 0;
+        }
         // sx sy 有问题 并且没考虑边界情况
         this.sx = 0;
         this.sy = 0;
-        if (width >= config.screenWidth) {
-            // 可能存在越界
-            if (x + width < config.screenWidth) {
-                x = config.screenWidth - width;
-            } else if (x > this.sx) {
-                x = this.sx;
-            }
-        }
-        if (height >= config.screenHeight) {
-            if (y + height < config.screenHeight) {
-                y = config.screenHeight - height;
-            } else if (y > this.sy) {
-                y = this.sy;
-            }
-        }
 
+        // 边界
         this.minX = config.screenWidth - width;
         this.maxX = this.sx;
         this.minY = config.screenHeight - height;
         this.maxY = this.sy;
+
+        if (width >= config.screenWidth) {
+            // 可能存在越界
+            if (x < this.minX) {
+                x = this.minX;
+            } else if (x > this.maxX) {
+                x = this.maxX;
+            }
+        }
+        if (height >= config.screenHeight) {
+            if (y < this.minY) {
+                y = this.minY;
+            } else if (y > this.maxY) {
+                y = this.maxY;
+            }
+        }
+
         // 动画元素 x y width height
         this.dx = x;
         this.dy = y;
