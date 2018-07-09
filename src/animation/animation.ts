@@ -20,11 +20,19 @@ export const swipe: Function = (
     // maxL 减速到0可位移的距离
     // lengthByTime 距离随时间变化的函数
     // speedByTime 速度随时间变化的函数
-    const v: number = (time / l) * 1000;
-    const a: number = (-1 / 3) * 10000;
+    // v 是否需要最大值
     const dir: number = l < 0 ? 1 : -1;
+    let v: number = (time / l) * 500;
+    const a: number = (-1 / 3) * 7000 * dir;
+    // const a: number = -0.95;
+    const MAX: number = 2300;
+    if (v > MAX) {
+        v = MAX;
+    } else if (v < -MAX) {
+        v = -MAX;
+    }
+    console.log(v);
     console.log(dir, begin, max);
-    // 不应该算终点速度为0
     const t: number = Math.abs(v / a);
     const lengthByTime: Function = (frameTime: number): number => {
         return v * frameTime + (1 / 2) * a * frameTime * frameTime;
@@ -46,5 +54,6 @@ export const swipe: Function = (
             valueList.push(end);
         }
     }
+
     return valueList;
 };

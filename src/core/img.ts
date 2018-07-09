@@ -230,7 +230,8 @@ export default class Img {
 
     private imgInit(): void {
         const image: HTMLImageElement = new Image();
-        image.src = '../../test.jpg';
+        // image.src = '../../test.jpg';
+        image.src = '../../image.jpg';
         image.onload = (): void => {
             this.img = image;
             this.imgWidth = image.width;
@@ -262,6 +263,7 @@ export default class Img {
         let height: number;
         let x: number;
         let y: number;
+        // TODO 感觉有点问题 应如果都大于屏幕尺寸 应该计算一下比例
         if (this.imgWidth > config.screenWidth) {
             width = config.screenWidth;
             height = this.imgHeight / (this.imgWidth / config.screenWidth);
