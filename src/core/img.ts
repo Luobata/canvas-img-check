@@ -19,8 +19,8 @@ interface Irender {
 }
 
 export const position: Iposition = {
-    centerX: 0,
-    centerY: 0,
+    centerX: -1,
+    centerY: -1,
     zoom: 1,
 };
 
@@ -67,6 +67,8 @@ export default class Img {
     private swipeEvent: EventListener;
     private moveEvent: EventListener;
 
+    private canMove: boolean = true;
+
     constructor(ctx: CanvasRenderingContext2D) {
         this.ctx = ctx;
         this.event();
@@ -80,8 +82,8 @@ export default class Img {
             position.zoom = 2;
         } else {
             position.zoom = 1;
-            position.centerX = config.screenWidth / 2;
-            position.centerY = config.screenHeight / 2;
+            // position.centerX = -1;
+            // position.centerY = -1;
         }
     }
 
@@ -194,10 +196,11 @@ export default class Img {
         };
 
         this.moveEvent = (delat: Ipoint): void => {
-            if (position.zoom === 1) {
-                // 图片间切换
-                // 如果没有下一张 放手弹回
-            } else {
+            // if (position.zoom === 1) {
+            //     // 图片间切换
+            //     // 如果没有下一张 放手弹回
+            // } else {
+            if (this.canMove) {
                 this.dx += delat.x;
                 this.dy += delat.y;
                 if (this.dx > this.maxX) {
@@ -225,7 +228,7 @@ export default class Img {
         config.emitter.on('swipe', this.swipeEvent);
 
         // 测试swipe 临时注释
-        // config.emitter.on('move', this.moveEvent);
+        config.emitter.on('move', this.moveEvent);
     }
 
     private imgInit(): void {
@@ -236,13 +239,9 @@ export default class Img {
             this.img = image;
             this.imgWidth = image.width;
             this.imgHeight = image.height;
-            this.getImageSize();
-            this.syncPosition(this.dx, this.dy, this.dwidth, this.dheight);
+            this.getImageStart();
             config.emitter.emit('render');
         };
-
-        position.centerX = config.screenWidth / 2;
-        position.centerY = config.screenHeight / 2;
     }
 
     private syncPosition(
@@ -255,6 +254,43 @@ export default class Img {
         this.y = y;
         this.width = width;
         this.height = height;
+    }
+
+    // 获取图片初始化位置
+    private getImageStart(): void {
+        let width: number;
+        let height: number;
+        let x: number;
+        let y: number;
+        if (this.imgWidth > config.screenWidth) {
+            width = config.screenWidth;
+            height = this.imgHeight / (this.imgWidth / config.screenWidth);
+        } else {
+            height = config.screenHeight;
+            width = this.imgWidth / (this.imgHeight / config.screenHeight);
+        }
+        width = width * position.zoom;
+        height = height * position.zoom;
+
+        // 如果zoom = 1 并且超出屏幕的 不用居中
+        x = 0;
+        y = 0;
+
+        this.x = this.dx = x;
+        this.y = this.dy = y;
+        this.width = this.dwidth = width;
+        this.height = this.dheight = height;
+
+        // 没有裁剪
+        this.sx = 0;
+        this.sy = 0;
+        this.swidth = this.imgWidth;
+        this.sheight = this.imgHeight;
+
+        this.minX = config.screenWidth - width;
+        this.maxX = this.sx;
+        this.minY = config.screenHeight - height;
+        this.maxY = this.sy;
     }
 
     private getImageSize(): void {
@@ -273,24 +309,13 @@ export default class Img {
         }
         width = width * position.zoom;
         height = height * position.zoom;
-        const centerX: number = config.screenWidth - position.centerX;
-        const centerY: number = config.screenHeight - position.centerY;
-        x = centerX - width / 2;
-        y = centerY - height / 2;
 
-        // 如果zoom = 1 并且超出屏幕的 不用居中
-        if (x < 0 && position.zoom === 1) {
-            x = 0;
-        }
-        if (y < 0 && position.zoom === 1) {
-            y = 0;
-        }
         if (position.zoom === 1) {
-            x = 0;
-            y = 0;
+            x = this.x + position.centerX;
+            y = this.y + position.centerY;
         } else {
-            x = -position.centerX;
-            y = -position.centerY;
+            x = this.x - position.centerX;
+            y = this.y - position.centerY;
         }
         // sx sy 有问题 并且没考虑边界情况
         this.sx = 0;
