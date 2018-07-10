@@ -29,6 +29,7 @@ type EventListener = (...args: (Object | string)[]) => void;
 export default class Img {
     // 每秒的帧数
     public static flashPerSecond: number = 60;
+    public tapZoom: number = 2;
     public renderList: Irender[] = [];
 
     private ctx: CanvasRenderingContext2D;
@@ -311,11 +312,12 @@ export default class Img {
         height = height * position.zoom;
 
         if (position.zoom === 1) {
-            x = this.x + position.centerX;
-            y = this.y + position.centerY;
+            // 2 是上一次缩放zoom 一定是从
+            x = (this.x + position.centerX) / this.tapZoom;
+            y = (this.y + position.centerY) / this.tapZoom;
         } else {
-            x = this.x - position.centerX;
-            y = this.y - position.centerY;
+            x = this.x * position.zoom - position.centerX;
+            y = this.y * position.zoom - position.centerY;
         }
         // sx sy 有问题 并且没考虑边界情况
         this.sx = 0;
