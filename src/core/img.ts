@@ -234,7 +234,7 @@ export default class Img {
 
     private imgInit(): void {
         const image: HTMLImageElement = new Image();
-        /// image.src = '../../test.jpg';
+        image.src = '../../test.jpg';
         image.src = '../../image.jpg';
         image.onload = (): void => {
             this.img = image;
@@ -263,6 +263,8 @@ export default class Img {
         let height: number;
         let x: number;
         let y: number;
+        let marginX: number = 0;
+        let marginY: number = 0;
         if (this.imgWidth > config.screenWidth) {
             width = config.screenWidth;
             height = this.imgHeight / (this.imgWidth / config.screenWidth);
@@ -273,6 +275,13 @@ export default class Img {
         width = width * position.zoom;
         height = height * position.zoom;
 
+        if (width < config.screenWidth) {
+            marginX = (config.screenWidth - width) / 2;
+        }
+        if (height < config.screenHeight) {
+            marginY = (config.screenHeight - height) / 2;
+        }
+
         // 如果zoom = 1 并且超出屏幕的 不用居中
         x = 0;
         y = 0;
@@ -281,6 +290,9 @@ export default class Img {
         this.y = this.dy = y;
         this.width = this.dwidth = width;
         this.height = this.dheight = height;
+
+        this.x += marginX;
+        this.y += marginY;
 
         // 没有裁剪
         this.sx = 0;
@@ -300,6 +312,8 @@ export default class Img {
         let height: number;
         let x: number;
         let y: number;
+        let marginX: number = 0;
+        let marginY: number = 0;
         // TODO 感觉有点问题 应如果都大于屏幕尺寸 应该计算一下比例
         if (this.imgWidth > config.screenWidth) {
             width = config.screenWidth;
@@ -318,6 +332,12 @@ export default class Img {
         } else {
             x = this.x * position.zoom - position.centerX;
             y = this.y * position.zoom - position.centerY;
+        }
+        if (width < config.screenWidth) {
+            x = (config.screenWidth - width) / 2;
+        }
+        if (height < config.screenHeight) {
+            y = (config.screenHeight - height) / 2;
         }
         // sx sy 有问题 并且没考虑边界情况
         this.sx = 0;
